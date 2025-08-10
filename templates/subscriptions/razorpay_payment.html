@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h2>Pay ₹{{ plan.price }} for {{ plan.name }}</h2>
+  <button id="rzp-button" class="btn btn-success">Pay with Razorpay</button>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+    "key": "{{ razorpay_key_id }}",
+    "amount": "{{ amount }}",
+    "currency": "INR",
+    "name": "{{ user.first_name }} {{ user.last_name }}",
+    "description": "Subscription",
+    "order_id": "{{ razorpay_order_id }}",
+    "handler": function (response){
+        window.location.href = "/verify_payment/?order_id=" + response.razorpay_order_id + "&payment_id=" + response.razorpay_payment_id;
+    },
+    "prefill": {
+        "email": "{{ user.email }}"
+    },
+    "theme": {
+        "color": "#3399cc"
+    },
+    "method": {
+        "upi": true,
+        "card": true,
+        "netbanking": true,
+        "wallet": false
+    }
+};
+var rzp = new Razorpay(options);
+document.getElementById('rzp-button').onclick = function(e){
+    rzp.open();
+    e.preventDefault();
+}
+</script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+  <h2 class="mb-4">Latest News</h2>
+
+  {% for article in articles %}
+  <div class="card mb-4 shadow-sm" style="width:500px; display:inline-block;">
+    {% if article.heading_image %}
+    <img src="{{ article.heading_image.url }}" class="card-img-top" alt="{{ article.title }}" style="height: 200px; object-fit: cover;">
+    {% else %}
+    {% endif %}
+
+    <div class="card-body">
+      <h4 class="card-title">{{ article.title }}</h4>
+      <p class="card-text text-muted">
+        <small>Published: {{ article.published_at|date:"F d, Y H:i" }}</small>
+      </p>
+      <p class="card-text">{{ article.summary }}</p>
+
+      {% if article.author %}
+      <p class="card-text"><strong>Author:</strong> {{ article.author.get_full_name|default:article.author.username }}</p>
+      {% endif %}
+
+     <a href="{% url 'view_article' article.id %}" class="read-more">Read More</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

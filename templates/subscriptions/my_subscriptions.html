@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="fw-bold mb-4">My Subscriptions</h2>
+            
+            {% if active_subscription %}
+            <div class="card mb-4 border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Active Subscription</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>{{ active_subscription.plan.name }}</h4>
+                            <p class="text-muted">{{ active_subscription.plan.features|linebreaks }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><strong>Start Date:</strong> {{ active_subscription.start_date|date:"F d, Y" }}</li>
+                                <li><strong>End Date:</strong> {{ active_subscription.end_date|date:"F d, Y" }}</li>
+                                <li><strong>Status:</strong> 
+                                    <span class="badge bg-success">Active</span>
+                                    ({{ active_subscription.end_date|timeuntil }} remaining)
+                                </li>
+                                <li><strong>Amount Paid:</strong> ₹{{ active_subscription.plan.price }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-warning">
+                You don't have an active subscription. <a href="{% url 'subscription_plans' %}" class="alert-link">Browse plans</a> to continue accessing premium content.
+            </div>
+            {% endif %}
+
+            <h4 class="mt-5 mb-3">Payment History</h4>
+            {% if payments %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Plan</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.created_at|date:"M d, Y" }}</td>
+                            <td>{{ payment.plan.name }}</td>
+                            <td>₹{{ payment.amount }}</td>
+                            <td>{{ payment.get_method_display }}</td>
+                            <td>
+                                {% if payment.is_paid %}
+                                <span class="badge bg-success">Success</span>
+                                {% else %}
+                                <span class="badge bg-warning">Pending</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">No payment history found.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

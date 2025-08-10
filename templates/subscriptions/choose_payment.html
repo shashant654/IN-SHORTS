@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h2>Choose Payment Method for {{ plan.name }}</h2>
+  <p>Price: ₹{{ plan.price }}</p>
+
+  <a href="{% url 'initiate_razorpay_payment' plan.id %}" class="btn btn-primary">Pay Online (UPI/Card/Netbanking)</a>
+  <a href="{% url 'pay_by_cash' plan.id %}" class="btn btn-secondary">Pay by Cash</a>
+</div>
+{% endblock %}

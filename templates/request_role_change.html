@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2>Request Role Change</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    {% if user.subscription_active %}
+        <div class="alert alert-info">
+            <p>Your subscription is active! To upload articles, please request an upgrade role from Reader to Editor or Journalist.</p>
+        </div>
+    {% else %}
+        <p>You are currently a <strong>Reader</strong>. To upload articles, please request an upgrade.</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="role" class="form-label">Select Role:</label>
+            <select name="role" class="form-select" required>
+                <option value="">-- Select Role --</option>
+                <option value="editor">Editor</option>
+                <option value="journalist">Journalist</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Request</button>
+    </form>
+</div>
+{% endblock %}

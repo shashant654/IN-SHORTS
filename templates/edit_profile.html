@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <div class="card border-0 shadow-lg overflow-hidden hover-lift">
+        <div class="card-header bg-gradient-info text-white py-3">
+          <div class="d-flex align-items-center">
+            <div class="profile-icon bg-white text-info rounded-circle p-3 me-3">
+              <i class="bi bi-person-lines-fill fs-4"></i>
+            </div>
+            <div>
+              <h4 class="mb-0 fw-bold">Edit Profile</h4>
+              <p class="mb-0 small opacity-75">Update your personal information</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+          <form method="POST" class="needs-validation" novalidate enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row">
+              <!-- Personal Info Column -->
+              <div class="col-md-6">
+                <h5 class="fw-bold text-info mb-3"><i class="bi bi-person-fill me-2"></i>Personal Information</h5>
+                
+                <!-- First Name -->
+                <div class="mb-4">
+                  <label for="first_name" class="form-label fw-medium text-secondary">First Name</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-person text-info"></i></span>
+                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}"
+                           class="form-control form-control-lg rounded-2 py-2" required>
+                  </div>
+                </div>
+
+                <!-- Last Name -->
+                <div class="mb-4">
+                  <label for="last_name" class="form-label fw-medium text-secondary">Last Name</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-person text-info"></i></span>
+                    <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}"
+                           class="form-control form-control-lg rounded-2 py-2" required>
+                  </div>
+                </div>
+
+                <!-- Gender -->
+                <div class="mb-4">
+                  <label for="gender" class="form-label fw-medium text-secondary">Gender</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-gender-ambiguous text-info"></i></span>
+                    <select id="gender" name="gender" class="form-select form-control-lg rounded-2 py-2">
+                      <option value="">Select Gender</option>
+                      {% for value, label in GENDER_CHOICES %}
+                        <option value="{{ value }}" {% if user.gender == value %}selected{% endif %}>{{ label }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="mb-4">
+                  <label for="dob" class="form-label fw-medium text-secondary">Date of Birth</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-calendar text-info"></i></span>
+                    <input type="date" id="dob" name="dob" value="{{ user.dob|date:'Y-m-d' }}"
+                           class="form-control form-control-lg rounded-2 py-2">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact Info Column -->
+              <div class="col-md-6">
+                <h5 class="fw-bold text-info mb-3"><i class="bi bi-telephone-fill me-2"></i>Contact Information</h5>
+                
+                <!-- Email -->
+                <div class="mb-4">
+                  <label for="email" class="form-label fw-medium text-secondary">Email</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-envelope text-info"></i></span>
+                    <input type="email" id="email" name="email" value="{{ user.email }}"
+                           class="form-control form-control-lg rounded-2 py-2" required>
+                  </div>
+                </div>
+
+                <!-- Mobile Number -->
+                <div class="mb-4">
+                  <label for="mobile_number" class="form-label fw-medium text-secondary">Mobile Number</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-phone text-info"></i></span>
+                    <input type="tel" id="mobile_number" name="mobile_number" value="{{ user.mobile_number }}"
+                           class="form-control form-control-lg rounded-2 py-2">
+                  </div>
+                </div>
+
+                <!-- Alternate Number -->
+                <div class="mb-4">
+                  <label for="alternate_number" class="form-label fw-medium text-secondary">Alternate Number</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-phone text-info"></i></span>
+                    <input type="tel" id="alternate_number" name="alternate_number" value="{{ user.alternate_number }}"
+                           class="form-control form-control-lg rounded-2 py-2">
+                  </div>
+                </div>
+
+                <!-- Profile Picture -->
+                <div class="mb-4">
+                  <label for="profile_picture" class="form-label fw-medium text-secondary">Profile Picture</label>
+                  <input type="file" id="profile_picture" name="profile_picture" 
+                         class="form-control form-control-lg rounded-2 py-2">
+                  {% if user.profile_picture %}
+                    <small class="text-muted">Current: {{ user.profile_picture.name }}</small>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Address Section -->
+            <div class="mt-4 pt-3 border-top">
+              <h5 class="fw-bold text-info mb-3"><i class="bi bi-geo-alt-fill me-2"></i>Address Information</h5>
+              
+              <div class="row">
+                <div class="col-md-4 mb-4">
+                  <label for="city" class="form-label fw-medium text-secondary">City</label>
+                  <input type="text" id="city" name="city" value="{{ user.city }}"
+                         class="form-control form-control-lg rounded-2 py-2">
+                </div>
+                <div class="col-md-4 mb-4">
+                  <label for="state" class="form-label fw-medium text-secondary">State</label>
+                  <input type="text" id="state" name="state" value="{{ user.state }}"
+                         class="form-control form-control-lg rounded-2 py-2">
+                </div>
+                <div class="col-md-4 mb-4">
+                  <label for="country" class="form-label fw-medium text-secondary">Country</label>
+                  <input type="text" id="country" name="country" value="{{ user.country }}"
+                         class="form-control form-control-lg rounded-2 py-2">
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between mt-5 pt-2">
+              <a href="{% url 'my_profile' %}" class="btn btn-outline-secondary px-4 rounded-pill">
+                <i class="bi bi-arrow-left me-2"></i>Cancel
+              </a>
+              <button type="submit" class="btn btn-info px-4 rounded-pill shadow-sm text-white">
+                <i class="bi bi-save me-2"></i>Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .bg-gradient-info {
+    background: linear-gradient(135deg, #17a2b8, #1abc9c);
+  }
+  
+  .hover-lift {
+    transition: all 0.3s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0,0,0,0.1) !important;
+  }
+  
+  .profile-icon {
+    transition: all 0.3s ease;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.1);
+  }
+  
+  .form-control-lg {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+  }
+  
+  .rounded-2 {
+    border-radius: 0.7rem !important;
+  }
+  
+  .btn-outline-secondary:hover {
+    background-color: #17a2b8;
+  }
+  
+  .btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+  }
+  
+  .btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+    transform: translateY(-2px);
+  }
+  
+  .input-group-text {
+    min-width: 45px;
+    justify-content: center;
+  }
+  
+  .form-control:focus {
+    border-color: #17a2b8;
+    box-shadow: 0 0 0 0.25rem rgba(23, 162, 184, 0.25);
+  }
+</style>
+
+<script>
+// Client-side form validation
+(function () {
+  'use strict'
+  
+  var forms = document.querySelectorAll('.needs-validation')
+  
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+</script>
+
+{% endblock %}

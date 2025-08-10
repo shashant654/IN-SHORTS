@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="card border-0 shadow-lg overflow-hidden hover-lift">
+        <div class="card-header bg-gradient-info text-white py-4">
+          <div class="d-flex align-items-center justify-content-center">
+            <div class="me-3">
+              <i class="bi bi-box-arrow-in-right fs-1"></i>
+            </div>
+            <div>
+              <h3 class="mb-0 fw-bold">Welcome Back</h3>
+              <p class="mb-0 small opacity-75">Sign in to your account</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+          <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+
+            {% if messages %}
+            <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                <div>
+                  {% for message in messages %}
+                    {{ message }}
+                  {% endfor %}
+                </div>
+              </div>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+
+            <!-- Email -->
+            <div class="mb-4">
+              <label for="email" class="form-label fw-medium text-secondary">Email Address</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="bi bi-envelope text-info"></i></span>
+                <input 
+                  type="email" 
+                  class="form-control form-control-lg py-2" 
+                  name="email" 
+                  id="email" 
+                  placeholder="your@email.com"
+                  required 
+                />
+                <div class="invalid-feedback">
+                  Please provide a valid email.
+                </div>
+              </div>
+              <div class="form-text text-muted ms-1 mt-1">
+                We'll never share your email with anyone else.
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+              <label for="password" class="form-label fw-medium text-secondary">Password</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="bi bi-lock text-info"></i></span>
+                <input 
+                  type="password" 
+                  class="form-control form-control-lg py-2" 
+                  id="password" 
+                  name="password" 
+                  placeholder="••••••••"
+                  required
+                />
+                <button class="btn btn-outline-secondary toggle-password" type="button">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <div class="invalid-feedback">
+                  Please enter your password.
+                </div>
+              </div>
+              <div class="text-end mt-2">
+                <a href="/password-reset/" class="text-decoration-none small text-info">Forgot password?</a>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-info w-100 py-2 rounded-pill shadow-sm text-white fw-bold mb-3">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+            </button>
+
+            <div class="text-center mt-4">
+              <p class="text-muted">Don't have an account? 
+                <a href="/register/" class="text-info fw-medium text-decoration-none">Create one</a>
+              </p>
+            </div>
+
+            <div class="d-flex align-items-center my-4">
+              <hr class="flex-grow-1 border-secondary opacity-25" />
+              <span class="px-3 text-muted small">OR</span>
+              <hr class="flex-grow-1 border-secondary opacity-25" />
+            </div>
+
+            <div class="d-grid gap-3">
+              <button type="button" class="btn btn-outline-primary rounded-pill py-2">
+                <i class="bi bi-google me-2"></i>Continue with Google
+              </button>
+              <button type="button" class="btn btn-outline-dark rounded-pill py-2">
+                <i class="bi bi-github me-2"></i>Continue with GitHub
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .bg-gradient-info {
+    background: linear-gradient(135deg, #17a2b8, #1abc9c);
+  }
+  
+  .hover-lift {
+    transition: all 0.3s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0,0,0,0.1) !important;
+  }
+  
+  .form-control-lg {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+  }
+  
+  .btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+    transform: translateY(-2px);
+  }
+  
+  .rounded-pill {
+    border-radius: 50rem !important;
+  }
+  
+  .input-group-text {
+    min-width: 45px;
+    justify-content: center;
+  }
+  
+  .form-control:focus {
+    border-color: #17a2b8;
+    box-shadow: 0 0 0 0.25rem rgba(23, 162, 184, 0.25);
+  }
+  
+  .alert-success {
+    border-left: 4px solid #198754;
+  }
+  
+  .toggle-password:hover {
+    {% comment %} background-color:  {% endcomment %}
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Password toggle functionality
+    const toggleButtons = document.querySelectorAll('.toggle-password');
+    toggleButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const passwordInput = this.parentNode.querySelector('input');
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('bi-eye-slash');
+        this.querySelector('i').classList.toggle('bi-eye');
+      });
+    });
+
+    // Form validation
+    (function () {
+      'use strict'
+      var forms = document.querySelectorAll('.needs-validation')
+      Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+          }, false)
+        })
+    })()
+  });
+</script>
+{% endblock %}

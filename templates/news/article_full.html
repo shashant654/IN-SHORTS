@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="article-container">
+    <h1>{{ article.title }}</h1>
+    
+    {% if article.heading_image %}
+        <img src="{{ article.heading_image.url }}" class="article-heading-image">
+    {% endif %}
+    
+    <div class="article-meta">
+        <span>By {{ article.author.get_full_name }}</span>
+        <span>Published on {{ article.published_at|date:"F j, Y" }}</span>
+    </div>
+    
+    <div class="article-content">
+        {{ article.content|linebreaks }}
+    </div>
+    
+    <div class="article-images">
+        {% for image in additional_images %}
+            <img src="{{ image.image.url }}" class="article-image">
+        {% endfor %}
+    </div>
+    
+    {% if article.source_url %}
+        <div class="source-link">
+            <a href="{{ article.source_url }}" target="_blank">Read original source</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

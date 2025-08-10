@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+
+# Django specific
+*.pot
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+media/
+staticfiles/
+static/
+
+# Environment
+.env
+news_env/
+env/
+ENV/
+.venv/
+venv.bak/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# pytest
+.pytest_cache/
+
+# Migrations (optional – comment out if you want them tracked)
+# **/migrations/*.py
+# !**/migrations/__init__.py
+
+# PostgreSQL dumps
+*.sql
+*.dump
+*.psql

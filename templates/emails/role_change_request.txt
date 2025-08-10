@@ -1,0 +1,7 @@
+Role Change Request
+
+User: {{ user.get_full_name }} ({{ user.email }})
+Current Role: {{ user.role }}
+Requested Role: {{ selected_role }}
+
+Please review and update their role in the Django Admin panel.

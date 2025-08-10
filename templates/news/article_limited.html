@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="article-container">
+    <h1>{{ article.title }}</h1>
+    
+    {% if article.heading_image %}
+        <img src="{{ article.heading_image.url }}" class="article-heading-image">
+    {% endif %}
+    
+    <div class="article-meta">
+        <span>By {{ article.author.get_full_name }}</span>
+        <span>Published on {{ article.published_at|date:"F j, Y" }}</span>
+    </div>
+    
+    <div class="article-summary">
+        <p>{{ article.summary }}</p>
+    </div>
+    
+    <div class="article-images">
+        {% for image in additional_images %}
+            <img src="{{ image.image.url }}" class="article-image">
+        {% endfor %}
+    </div>
+    
+    {% if not is_subscribed %}
+        <div class="subscribe-cta">
+            <p>Subscribe to read the full article and view all images.</p>
+            <a href="{% url 'subscription_plans' %}" class="btn btn-primary">Subscribe Now</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
