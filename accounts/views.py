@@ -32,8 +32,11 @@ def home(request):
     articles = NewsArticle.objects.select_related('author', 'category').order_by('-published_at')
     return render(request, 'news/news_list.html', {'articles': articles})
 
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from datetime import datetime
 
-# # Create your views here.
 def register(request):
     if request.method == "POST":
         first_name = request.POST.get('first_name', '').strip()
@@ -41,12 +44,11 @@ def register(request):
         email = request.POST.get('email', '').strip()
         password = request.POST.get('password', '').strip()
 
-        # Basic validation
+        # Validation
         if not first_name or not last_name or not email or not password:
             messages.error(request, 'All fields are required.')
             return redirect('/register/')
 
-        # Email format validation
         try:
             validate_email(email)
         except ValidationError:
@@ -61,7 +63,7 @@ def register(request):
             messages.error(request, 'Email already registered.')
             return redirect('/register/')
 
-        # Use email as username
+        # Create user
         user = User.objects.create(
             first_name=first_name,
             last_name=last_name,
@@ -71,7 +73,25 @@ def register(request):
         user.set_password(password)
         user.save()
 
-        messages.success(request, 'Account created successfully.')
+        # ===== Send Welcome Email =====
+        subject = "Welcome to NewsSite!"
+        html_content = render_to_string('emails/welcome_email.html', {
+            'user': user,
+            'site_url': request.build_absolute_uri('/'),
+            'year': datetime.now().year
+        })
+        text_content = strip_tags(html_content)
+
+        email_message = EmailMultiAlternatives(
+            subject,
+            text_content,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email]
+        )
+        email_message.attach_alternative(html_content, "text/html")
+        email_message.send()
+
+        messages.success(request, 'Account created successfully. A welcome email has been sent to your inbox.')
         return redirect('/login/')
 
     return render(request, 'register.html')
@@ -423,3 +443,55 @@ def request_role_change(request):
 
     return render(request, 'request_role_change.html')
 
+@login_required
+def my_articles(request):
+    articles = NewsArticle.objects.filter(author=request.user).order_by('-published_at')
+    return render(request, 'news/my_articles.html', {'articles': articles})
+
+
+@login_required
+def edit_article(request, article_id):
+    article = get_object_or_404(NewsArticle, id=article_id, author=request.user)
+    
+    if request.method == 'POST':
+        article.title = request.POST.get('title')
+        article.summary = request.POST.get('summary')
+        article.content = request.POST.get('content')
+        article.source_url = request.POST.get('source_url')
+        article.category_id = request.POST.get('category')
+        
+        if 'heading_image' in request.FILES:
+            article.heading_image = request.FILES['heading_image']
+        
+        article.save()
+        
+        # Handle additional images
+        for file in request.FILES.getlist('article_images'):
+            ArticleImage.objects.create(article=article, image=file)
+        
+        # Handle image deletion
+        delete_ids = request.POST.getlist('delete_images')
+        if delete_ids:
+            ArticleImage.objects.filter(id__in=delete_ids, article=article).delete()
+        
+        messages.success(request, "Article updated successfully!")
+        return redirect('my_articles')
+    
+    categories = Category.objects.all()
+    return render(request, 'news/edit_article.html', {
+        'article': article,
+        'categories': categories
+    })
+
+
+@login_required
+def delete_article(request, article_id):
+    article = get_object_or_404(NewsArticle, id=article_id, author=request.user)
+    
+    if request.method == 'POST':
+        article.deleted_at = timezone.now()
+        article.save()
+        messages.success(request, "Article has been deleted.")
+        return redirect('my_articles')
+    
+    return redirect('my_articles')

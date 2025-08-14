@@ -20,5 +20,8 @@ urlpatterns = [
     path('verify_payment/', verify_payment, name='verify_payment'),
     path('upload/', upload_article, name='upload_article'),
     path('request-role-change/', request_role_change, name='request_role_change'),
+    path('my-articles/', my_articles, name='my_articles'),
+    path('edit-article/<int:article_id>/', edit_article, name='edit_article'),
+    path('articles/delete/<int:article_id>/', delete_article, name='delete_article'),
 
 ]

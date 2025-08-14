@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to NewsSite</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f8f8f8; padding: 20px;">
+    <div style="max-width: 600px; background-color: white; margin: auto; padding: 20px; border-radius: 8px;">
+        <h2 style="color: #333;">Welcome, {{ user.first_name }}!</h2>
+        <p>
+            Thank you for joining <strong>NewsSite</strong>.  
+            We’re excited to have you on board!
+        </p>
+        <p>
+            You can now explore our latest news articles, stay updated, and enjoy exclusive content.
+        </p>
+        <a href="{{ site_url }}" 
+           style="display: inline-block; padding: 10px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+            Visit NewsSite
+        </a>
+        <p style="margin-top: 20px; color: #555;">
+            If you have any questions, feel free to reply to this email.
+        </p>
+        <p style="color: #888; font-size: 12px;">
+            &copy; {{ year }} NewsSite. All rights reserved.
+        </p>
+    </div>
+</body>
+</html>

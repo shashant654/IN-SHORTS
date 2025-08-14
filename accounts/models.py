@@ -39,9 +39,7 @@ class CustomUser(AbstractUser):
     def is_trial_expired(self):
         return (datetime.now().date() - self.trial_start_date.date()).days > 15
     
-    def can_access_news(self):
-        return not self.is_trial_expired() or self.subscription_active
-
+    
 
     def can_upload_news(self):
         """Check if the user can upload news articles."""
@@ -69,6 +67,12 @@ class Category(models.Model):
     slug = models.SlugField(unique=True)
 
 class NewsArticle(models.Model):
+    STATUS_CHOICES = [
+        ('draft','Draft'),
+        ('pending','Pending review'),
+        ('published','Published'),
+        ('rejected','Rejected'),
+    ]
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='articles',blank=True, null=True)
     heading_image = models.ImageField(upload_to='news_images/', blank=True, null=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='articles', blank=True, null=True)
@@ -77,13 +81,22 @@ class NewsArticle(models.Model):
     content = models.TextField()
     source_url = models.URLField()
     image_url = models.URLField(blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     published_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     is_featured = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def get_first_three_images(self):
         return self.images.all()[:3]
+    
+    def get_status_display(self):
+        return dict(self.STATUS_CHOICES).get(self.status, self.status)
+    
+    @property
+    def is_deleted(self):
+        return self.deleted_at is not None
+
 
 class ArticleImage(models.Model):
     article = models.ForeignKey(NewsArticle, on_delete=models.CASCADE, related_name='images')
