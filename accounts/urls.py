@@ -24,4 +24,7 @@ urlpatterns = [
     path('edit-article/<int:article_id>/', edit_article, name='edit_article'),
     path('articles/delete/<int:article_id>/', delete_article, name='delete_article'),
 
+    path('enable-2fa/', enable_2fa, name='enable_2fa'),
+
+
 ]

@@ -4,7 +4,8 @@ from django.db import models
 
 from django.conf import settings
 # Create your models here.
-
+import pyotp
+import secrets
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime, timedelta
 
@@ -32,6 +33,7 @@ class CustomUser(AbstractUser):
         ('journalist', 'Journalist'),
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='reader')
+    otp_secret = models.CharField(max_length=32, blank=True, null=True)
     
     def can_access_news(self):
         return self.subscription_active  
@@ -39,6 +41,17 @@ class CustomUser(AbstractUser):
     def is_trial_expired(self):
         return (datetime.now().date() - self.trial_start_date.date()).days > 15
     
+    def get_or_create_otp_secret(self):
+        if not self.otp_secret:
+            self.otp_secret = pyotp.random_base32()
+            self.save()
+        return self.otp_secret
+
+    def get_totp_uri(self):
+        return pyotp.TOTP(self.get_or_create_otp_secret()).provisioning_uri(
+            name=self.email,
+            issuer_name="NewsSite"
+        )
     
 
     def can_upload_news(self):

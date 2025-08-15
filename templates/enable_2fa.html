@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enable 2FA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            background: #0f3460;
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+        }
+        .btn-primary {
+            background-color: #e94560;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #ff2e63;
+        }
+        img {
+            border: 4px solid white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card p-4 text-center" style="max-width: 450px; width: 100%;">
+            <h3 class="mb-3">Enable Google Authenticator</h3>
+            <p class="text-light">Scan this QR code with your Google Authenticator app, then enter the 6-digit code below to verify.</p>
+
+            <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="img-fluid" />
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Verification Code</label>
+                    <input type="text" name="code" maxlength="6" class="form-control text-center" placeholder="Enter 6-digit code" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Verify & Enable 2FA</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

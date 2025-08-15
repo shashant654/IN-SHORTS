@@ -25,6 +25,9 @@ from django.utils.dateparse import parse_date
 from django.utils import timezone
 
 from django.core.exceptions import PermissionDenied
+import io
+import qrcode
+import pyotp
 
 
 def home(request):
@@ -122,7 +125,29 @@ def logout_page(request):
       logout(request)
       return redirect('/login/')
 
+@login_required
+def enable_2fa(request):
+    user = request.user
+    uri = user.get_totp_uri()
 
+    # Create QR code as base64
+    import base64
+    qr = qrcode.make(uri)
+    buffer = io.BytesIO()
+    qr.save(buffer, format='PNG')
+    qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+    if request.method == "POST":
+        code = request.POST.get("code")
+        totp = pyotp.TOTP(user.get_or_create_otp_secret())
+        if totp.verify(code):
+            request.session['is_2fa_verified'] = True
+            messages.success(request, "2FA enabled & verified successfully!")
+            return redirect('my_profile')
+        else:
+            messages.error(request, "Invalid verification code.")
+
+    return render(request, "enable_2fa.html", {"qr_code": qr_base64})
 
 @login_required
 def my_profile(request):
